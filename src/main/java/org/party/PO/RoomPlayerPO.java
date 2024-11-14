@@ -15,7 +15,7 @@ import org.party.Common.Enum.BooleanEnum;
 @TableName("room_player")
 public class RoomPlayerPO {
     private Long id;
-    private String roomId;
+    private Long roomId;
     private String playerId;
     private String joinTime;
     private BooleanEnum deleted;

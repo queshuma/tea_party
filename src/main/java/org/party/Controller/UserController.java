@@ -1,6 +1,5 @@
 package org.party.Controller;
 
-import lombok.Getter;
 import org.party.Model.LoginResModel;
 import org.party.Model.RoomCreateInfo;
 import org.party.Model.RoomDetailInfo;
@@ -50,6 +49,17 @@ public class UserController {
     }
 
     /**
+     * 保存个人信息
+     * @param loginCode
+     * @return
+     * @throws Exception
+     */
+//    @GetMapping("/save/user")
+//    private String saveUser(@RequestParam String loginCode) throws Exception {
+//        return userService.saveUser();
+//    }
+
+    /**
      * 发起房间
      * @param
      * @return
@@ -70,16 +80,4 @@ public class UserController {
     private RoomDetailInfo createRoom(@RequestBody RoomJoinInfo roomJoinInfo) {
         return userService.joinRoom(roomJoinInfo);
     }
-
-    /**
-     * 发送消息
-     * @param
-     * @return
-     * @throws Exception
-     */
-    @GetMapping("/send")
-    private String send(@RequestParam String roomId, @RequestParam String message) {
-        return userService.send(roomId, message);
-    }
-
 }

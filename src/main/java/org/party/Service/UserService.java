@@ -24,14 +24,9 @@ import org.springframework.util.ObjectUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.EOFException;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
@@ -143,9 +138,26 @@ public class UserService {
         if (playerNum >= roomDetailPO.getPlayerMax()) {
             throw new RuntimeException("房间已满员");
         }
+        // 判断房间模块是否存在
+        if(Objects.isNull(redisTemplate.hasKey("room"))) {
+            // 创建房间大模块
+            redisTemplate.opsForValue().set("room", new HashMap<String, Object>());
+        }
+        // 获取房间信息
+        HashMap<Long, Integer> roomMap = (HashMap<Long, Integer>) redisTemplate.opsForValue().get("room");
+        // 判断房间是否存在
+        if(Objects.isNull(roomMap.containsKey(roomJoinInfo.getId()))) {
+            // 记录到redis
+            roomMap.put(Long.valueOf(roomJoinInfo.getId()), 1);
+            redisTemplate.opsForValue().set("room", roomMap);
+        } else {
+            roomMap.put(Long.valueOf(roomJoinInfo.getId()), roomMap.get(roomJoinInfo.getId()) + 1);
+            redisTemplate.opsForValue().set("room", roomMap);
+        }
+
         // 加入房间
         RoomPlayerPO roomPlayerPO = new RoomPlayerPO();
-        roomPlayerPO.setRoomId(roomJoinInfo.getId());
+        roomPlayerPO.setRoomId(Long.valueOf(roomJoinInfo.getId()));
 
         // TODO
 //        roomPlayerPO.setUserId(roomJoinInfo.getUserId());
@@ -153,13 +165,8 @@ public class UserService {
         return null;
     }
 
-    public String send(String roomId, String message) {
-        HashMap<String, Object> hashMap = new HashMap();
-        // TODO
-        hashMap.put("userId", "usreId");
-        hashMap.put("sendTime", LocalDateTime.now());
-        hashMap.put("message", message);
-        redisTemplate.opsForValue().set(roomId, message);
+    private void createSocket() {
+
     }
 
 
